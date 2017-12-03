@@ -25,7 +25,8 @@ export const AddressActionsNonBasiliskModeRender = function(address, type) {
               <i className="icon wb-copy margin-right-5"></i> { translate('INDEX.COPY') + ' pub key' }
             </li>
             { !address.canspend &&
-              <li onClick={ () => this.dumpPrivKey(address) }>
+              this.props.mode !== 'spv' &&
+              <li onClick={ () => this.dumpPrivKey(address, type !== 'public' ? true : null) }>
                 <i className="icon fa-key margin-right-5"></i> { translate('INDEX.COPY') + ' priv key (WIF)' }
               </li>
             }
@@ -43,9 +44,11 @@ export const AddressItemRender = function(address, type) {
   return (
     <tr key={ address.address }>
       { this.renderAddressActions(address.address, type) }
-      <td>
+      <td title={ type !== 'public' ? address.address : '' }>
         { type === 'public' ? address.address : `${address.address.substring(0, 34)}...` }
         { !address.canspend &&
+          type === 'public' &&
+          this.props.mode !== 'spv' &&
           <i
             title="You don't own priv keys for this address"
             className="fa fa-ban margin-left-10"></i>
@@ -54,6 +57,8 @@ export const AddressItemRender = function(address, type) {
       <td>
         <span>{ address.amount }</span>
         { !address.canspend &&
+          type === 'public' &&
+          this.props.mode !== 'spv' &&
           <span title="Available amount to spend: 0"> (0)</span>
         }
       </td>

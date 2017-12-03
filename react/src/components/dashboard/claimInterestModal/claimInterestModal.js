@@ -29,6 +29,7 @@ class ClaimInterestModal extends React.Component {
       open: false,
       isLoading: true,
       transactionsList: [],
+      displayShowZeroInterestToggle: false,
       showZeroInterest: true,
       totalInterest: 0,
       spvPreflightSendInProgress: false,
@@ -36,6 +37,7 @@ class ClaimInterestModal extends React.Component {
       addressses: {},
       addressSelectorOpen: false,
       selectedAddress: null,
+      loading: false,
     };
     this.claimInterestTableRender = this.claimInterestTableRender.bind(this);
     this.toggleZeroInterest = this.toggleZeroInterest.bind(this);
@@ -91,6 +93,16 @@ class ClaimInterestModal extends React.Component {
   loadListUnspent() {
     let _transactionsList = [];
     let _totalInterest = 0;
+    let _zeroInterestUtxo = false;
+
+    this.setState({
+      loading: true,
+    });
+    setTimeout(() => {
+      this.setState({
+        loading: false,
+      });
+    }, 1000);
 
     if (this.props.ActiveCoin.mode === 'spv') {
       shepherdElectrumListunspent(
@@ -103,6 +115,10 @@ class ClaimInterestModal extends React.Component {
           json = json.result;
 
           for (let i = 0; i < json.length; i++) {
+            if (json[i].interest === 0) {
+              _zeroInterestUtxo = true;
+            }
+
             _transactionsList.push({
               address: json[i].address,
               locktime: json[i].locktime,
@@ -117,6 +133,7 @@ class ClaimInterestModal extends React.Component {
                 transactionsList: _transactionsList,
                 isLoading: false,
                 totalInterest: _totalInterest,
+                displayShowZeroInterestToggle: _zeroInterestUtxo,
               });
             }
           }
@@ -138,6 +155,9 @@ class ClaimInterestModal extends React.Component {
           for (let i = 0; i < json.length; i++) {
             getRawTransaction(this.props.ActiveCoin.coin, json[i].txid)
             .then((_json) => {
+              if (json[i].interest === 0) {
+                _zeroInterestUtxo = true;
+              }
               _addresses[json[i].address] = json[i].address;
               _transactionsList.push({
                 address: json[i].address,
@@ -155,6 +175,7 @@ class ClaimInterestModal extends React.Component {
                   totalInterest: _totalInterest,
                   addressses: _addresses,
                   selectedAddress: this.state.selectedAddress ? this.state.selectedAddress : _addresses[Object.keys(_addresses)[0]],
+                  displayShowZeroInterestToggle: _zeroInterestUtxo,
                 });
               }
             });
@@ -252,7 +273,7 @@ class ClaimInterestModal extends React.Component {
                 'error'
               )
             );
-          } else if (json.result && !json.result.iswatchonly && json.result.ismine) {
+          } else if (json.result && !json.result.iswatchonly && json.result.ismine && json.result.isvalid && !json.result.isscript) {
             sendToAddressPromise(
               this.props.ActiveCoin.coin,
               this.state.selectedAddress,

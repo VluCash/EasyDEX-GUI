@@ -52,8 +52,8 @@ const NavbarRender = function() {
                 <i className="site-menu-icon"></i> { translate('INDEX.WALLETS') }
               </a>
             </li>
-            <li className={ this.isSectionActive('edex') ? 'hide active nav-top-menu' : 'hide nav-top-menu' }>
-              <a onClick={ () => this.dashboardChangeSection('edex') }>
+            <li className={ this.isSectionActive('dex') ? 'hide active nav-top-menu' : 'hide nav-top-menu' }>
+              <a onClick={ () => this.dashboardChangeSection('dex') }>
                 <i className="site-menu-icon"></i> BarterDEX
               </a>
             </li>
@@ -99,27 +99,31 @@ const NavbarRender = function() {
                 </span>
               </a>
               <ul className="dropdown-menu">
-                <li>
-                  <a onClick={ () => this.dashboardChangeSection('settings') }>
-                    <i className="icon md-settings"></i> { translate('INDEX.SETTINGS') }
-                  </a>
-                </li>
-                <li>
-                  <a onClick={ () => this.dashboardChangeSection('about') }>
-                    <i className="icon fa-users"></i> { translate('ABOUT.ABOUT_AGAMA') }
-                  </a>
-                </li>
+                { !this.isSectionActive('settings') &&
+                  <li>
+                    <a onClick={ () => this.dashboardChangeSection('settings') }>
+                      <i className="icon md-settings"></i> { translate('INDEX.SETTINGS') }
+                    </a>
+                  </li>
+                }
+                { !this.isSectionActive('about') &&
+                  <li>
+                    <a onClick={ () => this.dashboardChangeSection('about') }>
+                      <i className="icon fa-users"></i> { translate('ABOUT.ABOUT_AGAMA') }
+                    </a>
+                  </li>
+                }
                 { this.isRenderSpvLockLogout() &&
                   <li>
                     <a onClick={ this.spvLock }>
-                      <i className="icon fa-lock"></i> Lock
+                      <i className="icon fa-lock"></i> Soft logout
                     </a>
                   </li>
                 }
                 { this.isRenderSpvLockLogout() &&
                   <li>
                     <a onClick={ this.spvLogout }>
-                      <i className="icon fa-power-off"></i> Logout
+                      <i className="icon fa-power-off"></i> Complete logout
                     </a>
                   </li>
                 }

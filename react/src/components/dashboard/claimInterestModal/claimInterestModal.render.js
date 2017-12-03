@@ -1,5 +1,6 @@
 import React from 'react';
 import { translate } from '../../../translate/translate';
+import Spinner from '../spinner/spinner';
 
 export const _ClaimInterestTableRender = function() {
   const _transactionsList = this.state.transactionsList;
@@ -47,22 +48,32 @@ export const _ClaimInterestTableRender = function() {
         <p>
           <strong>{ translate('CLAIM_INTEREST.TIP') }:</strong> { translate('CLAIM_INTEREST.TIP_DESC') }
         </p>
+        { this.props.ActiveCoin &&
+          this.props.ActiveCoin.mode === 'native' &&
+          <p>
+            <strong>{ translate('CLAIM_INTEREST.NOTICE') }:</strong> { translate('CLAIM_INTEREST.NATIVE_INTEREST_CHANGE_DESC') }
+          </p>
+        }
       </div>
       { this.state.totalInterest > 0 &&
         <div className="text-left padding-top-10 padding-bottom-10">
-          <label className="switch">
-            <input
-              type="checkbox"
-              checked={ this.state.showZeroInterest } />
-            <div
-              className="slider"
-              onClick={ this.toggleZeroInterest }></div>
-          </label>
-          <div
-            className="toggle-label margin-right-15 pointer"
-            onClick={ this.toggleZeroInterest }>
-            { translate('CLAIM_INTEREST.SHOW_ZERO_INTEREST') }
-          </div>
+          { this.state.displayShowZeroInterestToggle &&
+            <span>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={ this.state.showZeroInterest } />
+                <div
+                  className="slider"
+                  onClick={ this.toggleZeroInterest }></div>
+              </label>
+              <div
+                className="toggle-label margin-right-15 pointer"
+                onClick={ this.toggleZeroInterest }>
+                { translate('CLAIM_INTEREST.SHOW_ZERO_INTEREST') }
+              </div>
+            </span>
+          }
           { !this.state.spvVerificationWarning &&
             <button
               type="button"
@@ -163,9 +174,16 @@ export const ClaimInterestModalRender = function() {
               <h4 className="modal-title white text-left">{ translate('CLAIM_INTEREST.CLAIM_INTEREST', ' ') }</h4>
             </div>
             <div className="modal-body">
-              <i
-                className="icon fa-refresh pointer refresh-icon"
-                onClick={ this.loadListUnspent }></i>
+              { this.state.loading &&
+                <span className="spinner--medium">
+                  <Spinner />
+                </span>
+              }
+              { !this.state.loading &&
+                <i
+                  className="icon fa-refresh pointer refresh-icon"
+                  onClick={ this.loadListUnspent }></i>
+              }
               <div className="animsition vertical-align fade-in">
                 <div className="page-content vertical-align-middle full-width">
                   { this.state.isLoading &&

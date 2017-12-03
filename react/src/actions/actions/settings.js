@@ -3,11 +3,12 @@ import {
   GET_WIF_KEY,
   GET_DEBUG_LOG,
   GET_PEERS_LIST,
-  LOAD_APP_CONFIG
+  LOAD_APP_CONFIG,
 } from '../storeType';
 import { translate } from '../../translate/translate';
 import { triggerToaster } from '../actionCreators';
 import Config from '../../config';
+import Store from '../../store';
 
 function getAppInfoState(json) {
   return {
@@ -400,7 +401,7 @@ export function coindGetStdout(chain) {
     })
     .catch((error) => {
       console.log(error);
-      dispatch(
+      Store.dispatch(
         triggerToaster(
           'coindGetStdout',
           'Error',
@@ -427,7 +428,7 @@ export function getWalletDatKeys(chain, keyMatchPattern) {
     })
     .catch((error) => {
       console.log(error);
-      dispatch(
+      Store.dispatch(
         triggerToaster(
           'getWalletDatKeys',
           'Error',
@@ -442,12 +443,12 @@ export function getWalletDatKeys(chain, keyMatchPattern) {
   });
 }
 
-export function dumpPrivKey(coin, address) {
+export function dumpPrivKey(coin, address, isZaddr) {
   return new Promise((resolve, reject) => {
     const payload = {
       mode: null,
       chain: coin,
-      cmd: 'dumpprivkey',
+      cmd: isZaddr ? 'z_exportkey' : 'dumpprivkey',
       params: [ address ]
     };
 
@@ -465,7 +466,7 @@ export function dumpPrivKey(coin, address) {
     )
     .catch(function(error) {
       console.log(error);
-      dispatch(
+      Store.dispatch(
         triggerToaster(
           'dumpPrivKey',
           'Error',

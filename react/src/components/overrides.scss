@@ -424,9 +424,10 @@ select{
         z-index: 100;
         right: 20px;
         opacity: 0.5;
-      }
-      .close:hover {
-        opacity: 1;
+
+        &:hover {
+          opacity: 1;
+        }
       }
     }
   }
@@ -623,4 +624,11 @@ select{
   right: 18px;
   top: -15px;
   transform: scale(0.4);
+}
+
+.spinner--medium {
+  position: absolute;
+  right: 38px;
+  top: 0;
+  transform: scale(0.5);
 }
